@@ -5,18 +5,17 @@
 
 ## Properties
 
-| Property | Attribute | Description      | Type       | Default     |
-| -------- | --------- | ---------------- | ---------- | ----------- |
-| `first`  | `first`   | The first name   | `string`   | `undefined` |
-| `last`   | `last`    | The last name    | `string`   | `undefined` |
-| `middle` | --        | The middle names | `string[]` | `undefined` |
+| Property   | Attribute  | Description         | Type       | Default     |
+| ---------- | ---------- | ------------------- | ---------- | ----------- |
+| `choices`  | --         | The list of choices | `string[]` | `undefined` |
+| `question` | `question` | The question text   | `string`   | `undefined` |
 
 
 ## Events
 
-| Event         | Description                  | Type                  |
-| ------------- | ---------------------------- | --------------------- |
-| `nameClicked` | A custom named click handler | `CustomEvent<string>` |
+| Event            | Description                             | Type                  |
+| ---------------- | --------------------------------------- | --------------------- |
+| `choiceSelected` | Event emitted when a choice is selected | `CustomEvent<string>` |
 
 
 ----------------------------------------------

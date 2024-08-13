@@ -6,22 +6,29 @@
  */
 import { HTMLStencilElement, JSXBase } from "@stencil/core/internal";
 export namespace Components {
+    interface AssessmentComponent {
+        "questions": any[];
+        "resultsIntro": string;
+        "showProgress": boolean;
+    }
     interface MyComponent {
         /**
-          * The first name
+          * The list of choices
          */
-        "first": string;
+        "choices": string[];
         /**
-          * The last name
+          * The question text
          */
-        "last": string;
-        /**
-          * The middle names
-         */
-        "middle": string[];
+        "question": string;
     }
 }
 declare global {
+    interface HTMLAssessmentComponentElement extends Components.AssessmentComponent, HTMLStencilElement {
+    }
+    var HTMLAssessmentComponentElement: {
+        prototype: HTMLAssessmentComponentElement;
+        new (): HTMLAssessmentComponentElement;
+    };
     interface HTMLMyComponentElement extends Components.MyComponent, HTMLStencilElement {
     }
     var HTMLMyComponentElement: {
@@ -29,29 +36,34 @@ declare global {
         new (): HTMLMyComponentElement;
     };
     interface HTMLElementTagNameMap {
+        "assessment-component": HTMLAssessmentComponentElement;
         "my-component": HTMLMyComponentElement;
     }
 }
 declare namespace LocalJSX {
+    interface AssessmentComponent {
+        "onAssessmentCompleted"?: (event: CustomEvent<any>) => void;
+        "onPageChanged"?: (event: CustomEvent<number>) => void;
+        "questions"?: any[];
+        "resultsIntro"?: string;
+        "showProgress"?: boolean;
+    }
     interface MyComponent {
         /**
-          * The first name
+          * The list of choices
          */
-        "first"?: string;
+        "choices"?: string[];
         /**
-          * The last name
+          * Event emitted when a choice is selected
          */
-        "last"?: string;
+        "onChoiceSelected"?: (event: CustomEvent<string>) => void;
         /**
-          * The middle names
+          * The question text
          */
-        "middle"?: string[];
-        /**
-          * A custom named click handler
-         */
-        "onNameClicked"?: (event: CustomEvent<string>) => void;
+        "question"?: string;
     }
     interface IntrinsicElements {
+        "assessment-component": AssessmentComponent;
         "my-component": MyComponent;
     }
 }
@@ -59,6 +71,7 @@ export { LocalJSX as JSX };
 declare module "@stencil/core" {
     export namespace JSX {
         interface IntrinsicElements {
+            "assessment-component": LocalJSX.AssessmentComponent & JSXBase.HTMLAttributes<HTMLAssessmentComponentElement>;
             "my-component": LocalJSX.MyComponent & JSXBase.HTMLAttributes<HTMLMyComponentElement>;
         }
     }

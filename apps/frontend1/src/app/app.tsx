@@ -1,21 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { GraphQLClient, gql } from 'graphql-request';
 
-// this import uses path mapping under the hood and utilizes Stencil's React bindings
-import { MyComponent } from 'ui-components-react';
+const SPACE_ID = "h3n75a0xb6vi";
+const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
+const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
 
-export const App = () => {
+const client = new GraphQLClient(ENDPOINT, {
+  headers: {
+    Authorization: `Bearer ${ACCESS_TOKEN}`,
+  },
+});
+
+const GET_ASSESSMENT_DATA = gql`
+  query GetAssessment {
+    assessmentCollection {
+      items {
+        name
+        slug
+        intro {
+          json
+        }
+        questions
+        resultsIntro {
+          json
+        }
+      }
+    }
+  }
+`;
+
+const App = () => {
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    client.request(GET_ASSESSMENT_DATA)
+      .then(data => {
+        setData(data.assessmentCollection.items);
+        setLoading(false);
+      })
+      .catch(error => {
+        console.error("Error fetching assessment data:", error);
+        setError(error);
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error loading assessment</div>;
 
   return (
-    <>
-      <h1>Welcome to React with full Stencil component integration!</h1>
-      <MyComponent first="a Web Component / Custom Element"
-        middle={[
-          'with complex prop passing and easy event binding',
-          'for React'
-        ]}
-        last="thanks to Stencil"
-        onNameClicked={e => alert(e.detail)} />
-    </>
+    <div>
+      {data.map(assessment => (
+        <div key={assessment.slug}>
+          <h1>{assessment.name}</h1>
+          {/* Render assessment content */}
+        </div>
+      ))}
+    </div>
   );
 };
 

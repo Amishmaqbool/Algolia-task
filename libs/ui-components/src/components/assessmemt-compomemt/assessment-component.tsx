@@ -1,6 +1,7 @@
 import { Component, Event, EventEmitter, h, Prop, State } from '@stencil/core';
 import './assessment-component.scss';
 import { Host } from '@stencil/core';
+
 @Component({
   tag: 'assessment-component',
   styleUrl: 'assessment-component.scss',
@@ -40,7 +41,8 @@ export class AssessmentComponent {
     return isValid;
   }
 
-  handleNextPage() {
+  handleNextPage(event: MouseEvent) {
+    event.preventDefault(); // Prevent the default behavior that might trigger a URL update
     if (this.validateCurrentPage()) {
       if (this.currentPage < this.questions.length - 1) {
         this.currentPage += 1;
@@ -55,14 +57,16 @@ export class AssessmentComponent {
     }
   }
 
-  handlePreviousPage() {
+  handlePreviousPage(event: MouseEvent) {
+    event.preventDefault(); // Prevent the default behavior that might trigger a URL update
     if (this.currentPage > 0) {
       this.currentPage -= 1;
       this.pageChanged.emit(this.currentPage);
     }
   }
 
-  handleSubmit() {
+  handleSubmit(event: MouseEvent) {
+    event.preventDefault(); // Prevent the default behavior that might trigger a URL update
     if (this.validateCurrentPage()) {
       this.assessmentCompleted.emit(this.answers);
     } else {
@@ -144,7 +148,7 @@ export class AssessmentComponent {
             ))}
           </div>
         )}
-        <form>
+        <form onSubmit={(event) => event.preventDefault()}>
           {currentQuestion && (
             <div>
               <h2 class="text-1">{currentQuestion.name}</h2>
@@ -161,14 +165,20 @@ export class AssessmentComponent {
                 </div>
               ))}
               <div class="button-group">
-                <button onClick={() => this.handlePreviousPage()} disabled={this.currentPage === 0}>
+                <button
+                  onClick={(event) => this.handlePreviousPage(event)}
+                  disabled={this.currentPage === 0}
+                >
                   Previous
                 </button>
-                <button onClick={() => this.handleNextPage()} disabled={this.currentPage === this.questions.length - 1}>
+                <button
+                  onClick={(event) => this.handleNextPage(event)}
+                  disabled={this.currentPage === this.questions.length - 1}
+                >
                   Next
                 </button>
                 {this.currentPage === this.questions.length - 1 && (
-                  <button onClick={() => this.handleSubmit()}>Submit</button>
+                  <button onClick={(event) => this.handleSubmit(event)}>Submit</button>
                 )}
               </div>
             </div>

@@ -34,7 +34,7 @@ const GET_ASSESSMENT_DATA = gql`
         }
         questions
         resultsIntro {
-          json
+          jsonssss
         }
       }
     }
@@ -101,7 +101,6 @@ const AssessmentData = () => {
 
   );
 };
-
 
 // Main App component
 const App = () => {

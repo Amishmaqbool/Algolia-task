@@ -20,6 +20,7 @@
 | --------------------- | ----------- | --------------------- |
 | `assessmentCompleted` |             | `CustomEvent<any>`    |
 | `pageChanged`         |             | `CustomEvent<number>` |
+| `progressUpdated`     |             | `CustomEvent<number>` |
 
 
 ----------------------------------------------

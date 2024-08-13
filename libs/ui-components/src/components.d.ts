@@ -56,6 +56,7 @@ declare namespace LocalJSX {
     interface AssessmentComponent {
         "onAssessmentCompleted"?: (event: AssessmentComponentCustomEvent<any>) => void;
         "onPageChanged"?: (event: AssessmentComponentCustomEvent<number>) => void;
+        "onProgressUpdated"?: (event: AssessmentComponentCustomEvent<number>) => void;
         "questions"?: any[];
         "resultsIntro"?: string;
         "showProgress"?: boolean;

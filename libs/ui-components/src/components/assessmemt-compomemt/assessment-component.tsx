@@ -13,9 +13,11 @@ export class AssessmentComponent {
   @State() currentPage: number = 0;
   @State() answers: any[] = [];
   @State() validationErrors: Set<string> = new Set();
+  @State() completedPages: number = 0; // State to track completed pages
 
   @Event() assessmentCompleted: EventEmitter<any>;
   @Event() pageChanged: EventEmitter<number>;
+  @Event() progressUpdated: EventEmitter<number>; // Event to emit progress
 
   handleAnswer(questionId: string, answer: any) {
     this.answers = [...this.answers.filter((a) => a.questionId !== questionId), { questionId, answer }];
@@ -39,24 +41,27 @@ export class AssessmentComponent {
     return isValid;
   }
 
+  updateProgress() {
+    this.completedPages = this.currentPage + 1;
+    this.progressUpdated.emit(this.completedPages); // Emit the completed pages to the parent app
+  }
+
   handleNextPage(event: MouseEvent) {
     event.preventDefault();
-    // Bypass validation for testing
     if (true || this.validateCurrentPage()) {
       if (this.currentPage < this.questions.length - 1) {
         this.currentPage += 1;
+        this.updateProgress();
         this.pageChanged.emit(this.currentPage);
       }
     }
   }
 
-
-
-
   handlePreviousPage(event: MouseEvent) {
     event.preventDefault();
     if (this.currentPage > 0) {
       this.currentPage -= 1;
+      this.updateProgress();
       this.pageChanged.emit(this.currentPage);
     }
   }
@@ -66,7 +71,6 @@ export class AssessmentComponent {
     if (this.validateCurrentPage()) {
       this.assessmentCompleted.emit(this.answers);
     } else {
-      // Scroll to the first invalid field
       const firstInvalidField = document.querySelector(`.question[data-id="${[...this.validationErrors][0]}"]`);
       if (firstInvalidField) {
         firstInvalidField.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -75,95 +79,95 @@ export class AssessmentComponent {
   }
 
   renderQuestion(element: any) {
-    switch (element.type) {
-      case 'radiogroup':
-        return (
-          <div class="question">
-            <label>{element.title}</label>
-            <div class="radio-group">
-              {element.choices.map((choice: string) => (
-                <div class="radio-item" key={choice}>
-                  <input
-                    type="radio"
-                    name={element.name}
-                    value={choice}
-                    onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
-                  />
-                  <label>{choice}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'checkbox':
-        return (
-          <div class="question">
-            <label>{element.title}</label>
-            <div class="checkbox-group">
-              {element.choices.map((choice: string) => (
-                <div class="checkbox-item" key={choice}>
-                  <input
-                    type="checkbox"
-                    name={element.name}
-                    value={choice}
-                    onChange={(e) => {
-                      const checked = (e.target as HTMLInputElement).checked;
-                      this.handleAnswer(element.name, checked ? choice : null);
-                    }}
-                  />
-                  <label>{choice}</label>
-                </div>
-              ))}
-            </div>
-          </div>
-        );
-      case 'text':
-        return (
-          <div class="question">
-            <label>{element.title}</label>
-            <input
-              type="text"
-              name={element.name}
-              onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
-            />
-          </div>
-        );
-      case 'boolean':
-        return (
-          <div class="question">
-            <label>{element.title}</label>
-            <div class="boolean-group">
-              <div class="boolean-item">
+  switch (element.type) {
+    case 'radiogroup':
+      return (
+        <div class="question">
+          <label>{element.title}</label>
+          <div class="radio-group">
+            {element.choices.map((choice: string) => (
+              <div class="radio-item" key={choice}>
                 <input
                   type="radio"
                   name={element.name}
-                  value="true"
-                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'true')}
+                  value={choice}
+                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
                 />
-                <label>{element.labelTrue || 'Yes'}</label>
+                <label>{choice}</label>
               </div>
-              <div class="boolean-item">
+            ))}
+          </div>
+        </div>
+      );
+    case 'checkbox':
+      return (
+        <div class="question">
+          <label>{element.title}</label>
+          <div class="checkbox-group">
+            {element.choices.map((choice: string) => (
+              <div class="checkbox-item" key={choice}>
                 <input
-                  type="radio"
+                  type="checkbox"
                   name={element.name}
-                  value="false"
-                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'false')}
+                  value={choice}
+                  onChange={(e) => {
+                    const checked = (e.target as HTMLInputElement).checked;
+                    this.handleAnswer(element.name, checked ? choice : null);
+                  }}
                 />
-                <label>{element.labelFalse || 'No'}</label>
+                <label>{choice}</label>
               </div>
+            ))}
+          </div>
+        </div>
+      );
+    case 'text':
+      return (
+        <div class="question">
+          <label>{element.title}</label>
+          <input
+            type="text"
+            name={element.name}
+            onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
+          />
+        </div>
+      );
+    case 'boolean':
+      return (
+        <div class="question">
+          <label>{element.title}</label>
+          <div class="boolean-group">
+            <div class="boolean-item">
+              <input
+                type="radio"
+                name={element.name}
+                value="true"
+                onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'true')}
+              />
+              <label>{element.labelTrue || 'Yes'}</label>
+            </div>
+            <div class="boolean-item">
+              <input
+                type="radio"
+                name={element.name}
+                value="false"
+                onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'false')}
+              />
+              <label>{element.labelFalse || 'No'}</label>
             </div>
           </div>
-        );
-      default:
-        return null;
-    }
+        </div>
+      );
+    default:
+      return null;
   }
+}
 
 
-  render() {
-    const currentQuestion = this.questions[this.currentPage];
-    console.log('Current Page:', this.currentPage);
-    console.log('Current Question:', currentQuestion);
+render() {
+  const currentQuestion = this.questions[this.currentPage];
+  console.log('Current Page:', this.currentPage);
+  console.log('Current Question:', currentQuestion);
 
     return (
       <div class="assessment-container">
@@ -218,5 +222,4 @@ export class AssessmentComponent {
       </div>
     );
   }
-
 }

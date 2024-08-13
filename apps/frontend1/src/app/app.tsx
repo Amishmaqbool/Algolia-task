@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
@@ -45,9 +45,20 @@ const GET_ASSESSMENT_DATA = gql`
 const AssessmentData = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
   const [result, setResult] = useState([])
-  index.search('').then(({ hits }) => {
-    setResult(hits)
-  });
+
+
+  useEffect(() => {
+    // Define an async function inside the useEffect
+    const fetchData = async () => {
+      try {
+        const { hits } = await index.search('');
+        setResult(hits);
+      } catch (error) {
+        console.error('Error fetching search results:', error);
+      }
+    };
+    fetchData();
+  }, [result]);
   console.log(result , "====results")
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;

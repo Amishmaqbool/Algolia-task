@@ -12,7 +12,7 @@ const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
 
-// Initialize Apollo Client
+
 const client = new ApolloClient({
   uri: ENDPOINT,
   cache: new InMemoryCache(),
@@ -44,12 +44,31 @@ const GET_ASSESSMENT_DATA = gql`
 const AssessmentData = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
 
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;
 
   const assessment = data.assessmentCollection.items[0];
   const questions = assessment.questions.pages;
   const resultsIntro = documentToReactComponents(assessment.resultsIntro.json);
+
+  const renderResults = () => (
+    <div className="results">
+      {results.length === 0 ? (
+        <p>No results found</p>
+      ) : (
+        results.map((hit, index) => (
+          <div key={index} className="result-card">
+            <h3>{hit.title}</h3>
+            <p>Author: {hit.author}</p>
+            <p>Type: {hit.type}</p>
+            <p>{hit.description}</p>
+            {hit.imageUrl && <img src={hit.imageUrl} alt={hit.title} />}
+          </div>
+        ))
+      )}
+    </div>
+  );
 
   return (
     <AssessmentComponent

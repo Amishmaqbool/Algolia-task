@@ -34,6 +34,7 @@
   "dependencies": {
     "@apollo/client": "^3.11.4",
     "@contentful/rich-text-react-renderer": "^15.22.9",
+    "algoliasearch": "^4.24.0",
     "document-register-element": "1.14.3",
     "graphql": "^16.9.0",
     "graphql-request": "^7.1.0",

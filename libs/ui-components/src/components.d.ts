@@ -13,22 +13,18 @@ export namespace Components {
     }
     interface MyComponent {
         /**
-          * The list of choices
+          * The first name
          */
-        "choices": string[];
+        "first": string;
         /**
-          * The question text
+          * The last name
          */
-        "question": string;
+        "last": string;
+        /**
+          * The middle names
+         */
+        "middle": string[];
     }
-}
-export interface AssessmentComponentCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLAssessmentComponentElement;
-}
-export interface MyComponentCustomEvent<T> extends CustomEvent<T> {
-    detail: T;
-    target: HTMLMyComponentElement;
 }
 declare global {
     interface HTMLAssessmentComponentElement extends Components.AssessmentComponent, HTMLStencilElement {
@@ -50,25 +46,29 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AssessmentComponent {
-        "onAssessmentCompleted"?: (event: AssessmentComponentCustomEvent<any>) => void;
-        "onPageChanged"?: (event: AssessmentComponentCustomEvent<number>) => void;
+        "onAssessmentCompleted"?: (event: CustomEvent<any>) => void;
+        "onPageChanged"?: (event: CustomEvent<number>) => void;
         "questions"?: any[];
         "resultsIntro"?: string;
         "showProgress"?: boolean;
     }
     interface MyComponent {
         /**
-          * The list of choices
+          * The first name
          */
-        "choices"?: string[];
+        "first"?: string;
         /**
-          * Event emitted when a choice is selected
+          * The last name
          */
-        "onChoiceSelected"?: (event: MyComponentCustomEvent<string>) => void;
+        "last"?: string;
         /**
-          * The question text
+          * The middle names
          */
-        "question"?: string;
+        "middle"?: string[];
+        /**
+          * A custom named click handler
+         */
+        "onNameClicked"?: (event: CustomEvent<string>) => void;
     }
     interface IntrinsicElements {
         "assessment-component": AssessmentComponent;

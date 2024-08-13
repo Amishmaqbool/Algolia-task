@@ -1,4 +1,5 @@
 import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
+import { format } from '../../utils/utils';
 
 @Component({
   tag: 'my-component',
@@ -7,36 +8,31 @@ import { Component, Event, EventEmitter, h, Prop } from '@stencil/core';
 })
 export class MyComponent {
   /**
-   * The question text
+   * The first name
    */
-  @Prop() question: string;
+  @Prop() first: string;
 
   /**
-   * The list of choices
+   * The middle names
    */
-  @Prop() choices: string[];
+  @Prop() middle: string[];
 
   /**
-   * Event emitted when a choice is selected
+   * The last name
    */
-  @Event() choiceSelected: EventEmitter<string>;
+  @Prop() last: string;
 
-  private handleChoiceClick(choice: string) {
-    this.choiceSelected.emit(choice);
-  }
+  /**
+   * A custom named click handler
+   */
+  @Event() nameClicked: EventEmitter<string>;
 
   render() {
-    return (
-      <div>
-        <p>{this.question}</p>
-        <ul>
-          {this.choices.map(choice => (
-            <li key={choice} onClick={() => this.handleChoiceClick(choice)}>
-              {choice}
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+    const fullText = this.getText();
+    return <div onClick={() => this.nameClicked.emit(fullText)}>Hello, World! I'm {fullText}</div>;
+  }
+
+  private getText(): string {
+    return format(this.first, this.middle?.join(' '), this.last);
   }
 }

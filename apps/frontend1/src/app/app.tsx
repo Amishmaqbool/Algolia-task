@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 
@@ -48,7 +48,55 @@ const AssessmentData = () => {
     <div>
       <h1>{assessment.name}</h1>
       <div>{documentToReactComponents(assessment.intro.json)}</div>
-      {/* You can render questions or other content as needed */}
+      <hr />
+      {assessment.questions.pages.map((page: any, pageIndex: number) => (
+        <div key={pageIndex}>
+          <h2>{page.name}</h2>
+          {page.elements.map((element: any, elementIndex: number) => (
+            <div key={elementIndex}>
+              <h3>{element.title}</h3>
+              {element.type === "radiogroup" && (
+                <div>
+                  {element.choices.map((choice: string, choiceIndex: number) => (
+                    <div key={choiceIndex}>
+                      <input type="radio" id={`${element.name}-${choiceIndex}`} name={element.name} value={choice} />
+                      <label htmlFor={`${element.name}-${choiceIndex}`}>{choice}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {element.type === "checkbox" && (
+                <div>
+                  {element.choices.map((choice: string, choiceIndex: number) => (
+                    <div key={choiceIndex}>
+                      <input type="checkbox" id={`${element.name}-${choiceIndex}`} name={element.name} value={choice} />
+                      <label htmlFor={`${element.name}-${choiceIndex}`}>{choice}</label>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {element.type === "text" && (
+                <div>
+                  <input type="text" id={element.name} name={element.name} required={element.isRequired} />
+                </div>
+              )}
+              {element.type === "boolean" && (
+                <div>
+                  <div>
+                    <input type="radio" id={`${element.name}-true`} name={element.name} value="true" />
+                    <label htmlFor={`${element.name}-true`}>{element.labelTrue || "Yes"}</label>
+                  </div>
+                  <div>
+                    <input type="radio" id={`${element.name}-false`} name={element.name} value="false" />
+                    <label htmlFor={`${element.name}-false`}>{element.labelFalse || "No"}</label>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          <hr />
+        </div>
+      ))}
     </div>
   );
 };

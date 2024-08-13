@@ -26,6 +26,14 @@ export namespace Components {
         "middle": string[];
     }
 }
+export interface AssessmentComponentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLAssessmentComponentElement;
+}
+export interface MyComponentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMyComponentElement;
+}
 declare global {
     interface HTMLAssessmentComponentElement extends Components.AssessmentComponent, HTMLStencilElement {
     }
@@ -46,8 +54,8 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AssessmentComponent {
-        "onAssessmentCompleted"?: (event: CustomEvent<any>) => void;
-        "onPageChanged"?: (event: CustomEvent<number>) => void;
+        "onAssessmentCompleted"?: (event: AssessmentComponentCustomEvent<any>) => void;
+        "onPageChanged"?: (event: AssessmentComponentCustomEvent<number>) => void;
         "questions"?: any[];
         "resultsIntro"?: string;
         "showProgress"?: boolean;
@@ -68,7 +76,7 @@ declare namespace LocalJSX {
         /**
           * A custom named click handler
          */
-        "onNameClicked"?: (event: CustomEvent<string>) => void;
+        "onNameClicked"?: (event: MyComponentCustomEvent<string>) => void;
     }
     interface IntrinsicElements {
         "assessment-component": AssessmentComponent;

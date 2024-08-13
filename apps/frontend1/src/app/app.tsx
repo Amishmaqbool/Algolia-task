@@ -1,16 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import "./app.scss";
-
-// Import the Stencil component
+import algoliasearch from 'algoliasearch/lite';
 import { AssessmentComponent } from 'ui-components-react';
 
 // Constants for Contentful API
 const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
+const searchClient = algoliasearch('4WK61QBPDU', 'a3a8a3edba3b7ba9dad65b2984b91e69');
+const index = searchClient.initIndex('algolia-recommendation-data');
 
 // Initialize Apollo Client
 const client = new ApolloClient({
@@ -43,7 +44,11 @@ const GET_ASSESSMENT_DATA = gql`
 // Component to fetch and display assessment data
 const AssessmentData = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
-
+  const [result, setResult] = useState([])
+  index.search('').then(({ hits }) => {
+    setResult(hits)
+  });
+  console.log(result , "====results")
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;
 
@@ -52,11 +57,35 @@ const AssessmentData = () => {
   const resultsIntro = documentToReactComponents(assessment.resultsIntro.json);
 
   return (
-    <AssessmentComponent
-      questions={questions}
-      // resultsIntro={resultsIntro}
-      showProgress={true}
-    />
+    <>
+      <AssessmentComponent
+        questions={questions}
+        showProgress={true}
+      />
+      {result && (
+        <section className="blog-grid">
+          {result.map((el, index) => (
+            <article key={index} className="blog-post">
+              {el.imageUrl ? (
+                <img src={el.imageUrl} alt={el.title} className="blog-image" />
+              ) : null}
+              <div className="blog-content">
+                <h2 className="blog-title">{el.title}</h2>
+                <p className="blog-author">by {el.author}</p>
+                <p className="blog-type">Type Of Resource: {el.type}</p>
+                <p className="blog-description">{el.description}</p>
+                <ul className="blog-tags">
+                  {el.tags.map((tag, tagIndex) => (
+                    <li key={tagIndex} className="blog-tag">{tag}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          ))}
+        </section>
+      )}
+    </>
+
   );
 };
 

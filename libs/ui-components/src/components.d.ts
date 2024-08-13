@@ -22,6 +22,14 @@ export namespace Components {
         "question": string;
     }
 }
+export interface AssessmentComponentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLAssessmentComponentElement;
+}
+export interface MyComponentCustomEvent<T> extends CustomEvent<T> {
+    detail: T;
+    target: HTMLMyComponentElement;
+}
 declare global {
     interface HTMLAssessmentComponentElement extends Components.AssessmentComponent, HTMLStencilElement {
     }
@@ -42,8 +50,8 @@ declare global {
 }
 declare namespace LocalJSX {
     interface AssessmentComponent {
-        "onAssessmentCompleted"?: (event: CustomEvent<any>) => void;
-        "onPageChanged"?: (event: CustomEvent<number>) => void;
+        "onAssessmentCompleted"?: (event: AssessmentComponentCustomEvent<any>) => void;
+        "onPageChanged"?: (event: AssessmentComponentCustomEvent<number>) => void;
         "questions"?: any[];
         "resultsIntro"?: string;
         "showProgress"?: boolean;
@@ -56,7 +64,7 @@ declare namespace LocalJSX {
         /**
           * Event emitted when a choice is selected
          */
-        "onChoiceSelected"?: (event: CustomEvent<string>) => void;
+        "onChoiceSelected"?: (event: MyComponentCustomEvent<string>) => void;
         /**
           * The question text
          */

@@ -1,0 +1,38 @@
+{
+  "npmScope": "yourcompany",
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "tslint.json": "*",
+    "nx.json": "*",
+    "tsconfig.base.json": "*",
+    ".eslintrc.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "lint", "test", "e2e"]
+      }
+    }
+  },
+  "projects": {
+    "frontend1": {
+      "tags": [],
+      "implicitDependencies": ["ui-components"]
+    },
+    "frontend1-e2e": {
+      "tags": [],
+      "implicitDependencies": ["frontend1"]
+    },
+    "ui-components": {
+      "tags": []
+    }
+  },
+  "affected": {
+    "defaultBase": "master"
+  }
+}

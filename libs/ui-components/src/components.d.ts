@@ -10,6 +10,7 @@ export namespace Components {
         "questions": any[];
         "resultsIntro": string;
         "showProgress": boolean;
+        "triggerSearch": boolean;
     }
     interface MyComponent {
         /**
@@ -60,6 +61,7 @@ declare namespace LocalJSX {
         "questions"?: any[];
         "resultsIntro"?: string;
         "showProgress"?: boolean;
+        "triggerSearch"?: boolean;
     }
     interface MyComponent {
         /**

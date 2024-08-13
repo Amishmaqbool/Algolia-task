@@ -9,15 +9,20 @@ export class AssessmentComponent {
   @Prop() questions: any[] = [];
   @Prop() resultsIntro: string = '';
   @Prop() showProgress: boolean = true;
+  @Prop() triggerSearch: boolean = false;
 
   @State() currentPage: number = 0;
   @State() answers: any[] = [];
   @State() validationErrors: Set<string> = new Set();
-  @State() completedPages: number = 0; // State to track completed pages
-
+  @State() completedPages: number = 0;
+  @State() localTriggerSearch: boolean = false;
   @Event() assessmentCompleted: EventEmitter<any>;
   @Event() pageChanged: EventEmitter<number>;
-  @Event() progressUpdated: EventEmitter<number>; // Event to emit progress
+  @Event() progressUpdated: EventEmitter<number>;
+
+  componentWillLoad() {
+    this.localTriggerSearch = this.triggerSearch;
+  }
 
   handleAnswer(questionId: string, answer: any) {
     this.answers = [...this.answers.filter((a) => a.questionId !== questionId), { questionId, answer }];
@@ -43,12 +48,12 @@ export class AssessmentComponent {
 
   updateProgress() {
     this.completedPages = this.currentPage + 1;
-    this.progressUpdated.emit(this.completedPages); // Emit the completed pages to the parent app
+    this.progressUpdated.emit(this.completedPages);
   }
 
   handleNextPage(event: MouseEvent) {
     event.preventDefault();
-    if (true || this.validateCurrentPage()) {
+    if (this.validateCurrentPage()) {
       if (this.currentPage < this.questions.length - 1) {
         this.currentPage += 1;
         this.updateProgress();
@@ -69,7 +74,13 @@ export class AssessmentComponent {
   handleSubmit(event: MouseEvent) {
     event.preventDefault();
     if (this.validateCurrentPage()) {
+      console.log('Submit button clicked, setting localTriggerSearch to true');
       this.assessmentCompleted.emit(this.answers);
+      this.localTriggerSearch = true;
+
+      if (this.localTriggerSearch) {
+        console.log('Triggering search...');
+      }
     } else {
       const firstInvalidField = document.querySelector(`.question[data-id="${[...this.validationErrors][0]}"]`);
       if (firstInvalidField) {
@@ -79,95 +90,94 @@ export class AssessmentComponent {
   }
 
   renderQuestion(element: any) {
-  switch (element.type) {
-    case 'radiogroup':
-      return (
-        <div class="question">
-          <label>{element.title}</label>
-          <div class="radio-group">
-            {element.choices.map((choice: string) => (
-              <div class="radio-item" key={choice}>
+    switch (element.type) {
+      case 'radiogroup':
+        return (
+          <div class="question">
+            <label>{element.title}</label>
+            <div class="radio-group">
+              {element.choices.map((choice: string) => (
+                <div class="radio-item" key={choice}>
+                  <input
+                    type="radio"
+                    name={element.name}
+                    value={choice}
+                    onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
+                  />
+                  <label>{choice}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'checkbox':
+        return (
+          <div class="question">
+            <label>{element.title}</label>
+            <div class="checkbox-group">
+              {element.choices.map((choice: string) => (
+                <div class="checkbox-item" key={choice}>
+                  <input
+                    type="checkbox"
+                    name={element.name}
+                    value={choice}
+                    onChange={(e) => {
+                      const checked = (e.target as HTMLInputElement).checked;
+                      this.handleAnswer(element.name, checked ? choice : null);
+                    }}
+                  />
+                  <label>{choice}</label>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case 'text':
+        return (
+          <div class="question">
+            <label>{element.title}</label>
+            <input
+              type="text"
+              name={element.name}
+              onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
+            />
+          </div>
+        );
+      case 'boolean':
+        return (
+          <div class="question">
+            <label>{element.title}</label>
+            <div class="boolean-group">
+              <div class="boolean-item">
                 <input
                   type="radio"
                   name={element.name}
-                  value={choice}
-                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
+                  value="true"
+                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'true')}
                 />
-                <label>{choice}</label>
+                <label>{element.labelTrue || 'Yes'}</label>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-    case 'checkbox':
-      return (
-        <div class="question">
-          <label>{element.title}</label>
-          <div class="checkbox-group">
-            {element.choices.map((choice: string) => (
-              <div class="checkbox-item" key={choice}>
+              <div class="boolean-item">
                 <input
-                  type="checkbox"
+                  type="radio"
                   name={element.name}
-                  value={choice}
-                  onChange={(e) => {
-                    const checked = (e.target as HTMLInputElement).checked;
-                    this.handleAnswer(element.name, checked ? choice : null);
-                  }}
+                  value="false"
+                  onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'false')}
                 />
-                <label>{choice}</label>
+                <label>{element.labelFalse || 'No'}</label>
               </div>
-            ))}
-          </div>
-        </div>
-      );
-    case 'text':
-      return (
-        <div class="question">
-          <label>{element.title}</label>
-          <input
-            type="text"
-            name={element.name}
-            onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value)}
-          />
-        </div>
-      );
-    case 'boolean':
-      return (
-        <div class="question">
-          <label>{element.title}</label>
-          <div class="boolean-group">
-            <div class="boolean-item">
-              <input
-                type="radio"
-                name={element.name}
-                value="true"
-                onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'true')}
-              />
-              <label>{element.labelTrue || 'Yes'}</label>
-            </div>
-            <div class="boolean-item">
-              <input
-                type="radio"
-                name={element.name}
-                value="false"
-                onChange={(e) => this.handleAnswer(element.name, (e.target as HTMLInputElement).value === 'false')}
-              />
-              <label>{element.labelFalse || 'No'}</label>
             </div>
           </div>
-        </div>
-      );
-    default:
-      return null;
+        );
+      default:
+        return null;
+    }
   }
-}
 
-
-render() {
-  const currentQuestion = this.questions[this.currentPage];
-  console.log('Current Page:', this.currentPage);
-  console.log('Current Question:', currentQuestion);
+  render() {
+    const currentQuestion = this.questions[this.currentPage];
+    console.log('Current Page:', this.currentPage);
+    console.log('Current Question:', currentQuestion);
 
     return (
       <div class="assessment-container">
@@ -204,12 +214,13 @@ render() {
                 >
                   Previous
                 </button>
-                <button
-                  onClick={(event) => this.handleNextPage(event)}
-                  disabled={this.currentPage === this.questions.length - 1}
-                >
-                  Next
-                </button>
+                {this.currentPage < this.questions.length - 1 && (
+                  <button
+                    onClick={(event) => this.handleNextPage(event)}
+                  >
+                    Next
+                  </button>
+                )}
 
                 {this.currentPage === this.questions.length - 1 && (
                   <button onClick={(event) => this.handleSubmit(event)}>Submit</button>

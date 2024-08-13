@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import ReactDOMServer from 'react-dom/server';
+import React, { useState } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
-import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import "./app.scss";
 import algoliasearch from 'algoliasearch/lite';
 import { AssessmentComponent } from 'ui-components-react';
+import RichTextRenderer from './RichTextRenderer';
 
-// Constants for Contentful API
 const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
 const searchClient = algoliasearch('4WK61QBPDU', 'a3a8a3edba3b7ba9dad65b2984b91e69');
 const index = searchClient.initIndex('algolia-recommendation-data');
-
 
 const client = new ApolloClient({
   uri: ENDPOINT,
@@ -22,7 +19,6 @@ const client = new ApolloClient({
   },
 });
 
-// GraphQL query to get assessment data
 const GET_ASSESSMENT_DATA = gql`
   query GetAssessment {
     assessmentCollection {
@@ -34,75 +30,85 @@ const GET_ASSESSMENT_DATA = gql`
         }
         questions
         resultsIntro {
-          jsonssss
+          json
         }
       }
     }
   }
 `;
 
-// Component to fetch and display assessment data
 const AssessmentData = () => {
+  const [result, setResult] = useState([]);
+  const [loadingResults, setLoadingResults] = useState(false);
+  const [searchTriggered, setSearchTriggered] = useState(false);
+
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
-  const [result, setResult] = useState([])
+
+  const handleSearch = async () => {
+    setLoadingResults(true);
+    try {
+      const { hits } = await index.search('');
+      setResult(hits);
+      setSearchTriggered(true);
+    } catch (error) {
+      console.error('Error fetching search results:', error);
+    } finally {
+      setLoadingResults(false);
+    }
+  };
 
 
-  useEffect(() => {
-    // Define an async function inside the useEffect
-    const fetchData = async () => {
-      try {
-        const { hits } = await index.search('');
-        setResult(hits);
-      } catch (error) {
-        console.error('Error fetching search results:', error);
-      }
-    };
-    fetchData();
-  }, [result]);
-  console.log(result , "====results")
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading assessment data...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;
 
   const assessment = data.assessmentCollection.items[0];
   const questions = assessment.questions.pages;
-  const resultsIntro = documentToReactComponents(assessment.resultsIntro.json);
+  const introContent = assessment.intro.json;
+  const resultsIntro = assessment.resultsIntro.json;
 
-
+  console.log(introContent, "-----introContent");
 
   return (
     <>
+      <RichTextRenderer document={introContent} />
       <AssessmentComponent
         questions={questions}
         showProgress={true}
+        onSubmit={handleSearch}
       />
-      {result && (
-        <section className="blog-grid">
-          {result.map((el, index) => (
-            <article key={index} className="blog-post">
-              {el.imageUrl ? (
-                <img src={el.imageUrl} alt={el.title} className="blog-image" />
-              ) : null}
-              <div className="blog-content">
-                <h2 className="blog-title">{el.title}</h2>
-                <p className="blog-author">by {el.author}</p>
-                <p className="blog-type">Type Of Resource: {el.type}</p>
-                <p className="blog-description">{el.description}</p>
-                <ul className="blog-tags">
-                  {el.tags.map((tag, tagIndex) => (
-                    <li key={tagIndex} className="blog-tag">{tag}</li>
-                  ))}
-                </ul>
-              </div>
-            </article>
-          ))}
-        </section>
+      {searchTriggered && (
+        loadingResults ? (
+          <div>Loading search results...</div>
+        ) : result.length > 0 ? (
+          <section className="blog-grid">
+            {result.map((el, index) => (
+              <article key={index} className="blog-post">
+                {el.imageUrl ? (
+                  <img src={el.imageUrl} alt={el.title} className="blog-image" />
+                ) : null}
+                <div className="blog-content">
+                  <h2 className="blog-title">{el.title}</h2>
+                  <p className="blog-author">by {el.author}</p>
+                  <p className="blog-type">Type Of Resource: {el.type}</p>
+                  <p className="blog-description">{el.description}</p>
+                  <ul className="blog-tags">
+                    {el.tags.map((tag, tagIndex) => (
+                      <li key={tagIndex} className="blog-tag">{tag}</li>
+                    ))}
+                  </ul>
+                </div>
+              </article>
+            ))}
+          </section>
+        ) : (
+          <div>No results found.</div>
+        )
       )}
-    </>
 
+    </>
   );
 };
 
-// Main App component
 const App = () => {
   return (
     <ApolloProvider client={client}>

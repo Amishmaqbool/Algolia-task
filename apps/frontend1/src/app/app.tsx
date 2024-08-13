@@ -318,21 +318,27 @@ const AssessmentData = () => {
       </form>
       {results.length > 0 && renderResults()}
       {searchResults && (
-        <section className="blog-section">
-          {searchResults.map((el, index) => (
-            <article key={index} className="blog-post">
-              <h2 className="blog-title">{el.title}</h2>
-              <p className="blog-author">by {el.author}</p>
-              <p className="blog-description">{el.description}</p>
-              <ul className="blog-tags">
-                {el.tags.map((tag, tagIndex) => (
-                  <li key={tagIndex} className="blog-tag">{tag}</li>
-                ))}
-              </ul>
-            </article>
-          ))}
-        </section>
-      )}
+  <section className="blog-grid">
+    {searchResults.map((el, index) => (
+      <article key={index} className="blog-post">
+        {el.imageUrl ? (
+          <img src={el.imageUrl} alt={el.title} className="blog-image" />
+        ) : null}
+        <div className="blog-content">
+          <h2 className="blog-title">{el.title}</h2>
+          <p className="blog-author">by {el.author}</p>
+          <p className="blog-type">Type Of Resource: {el.type}</p>
+          <p className="blog-description">{el.description}</p>
+          <ul className="blog-tags">
+            {el.tags.map((tag, tagIndex) => (
+              <li key={tagIndex} className="blog-tag">{tag}</li>
+            ))}
+          </ul>
+        </div>
+      </article>
+    ))}
+  </section>
+)}
 
     </div>
   );

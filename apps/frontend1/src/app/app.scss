@@ -102,56 +102,77 @@ button:hover {
   margin-top: 5px;
 }
 
-.blog-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+.blog-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px; 
   padding: 20px;
-  margin-top: 32px;
-  background-color: #f4f4f4;
+}
 
-  .blog-post {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+.blog-post {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .blog-image {
+    width: 100%;
+    height: 200px; // Adjust the height for the banner image
+    object-fit: cover;
+    border-bottom: 1px solid #ddd;
+    display: block;
+  }
+
+  .blog-content {
     padding: 20px;
-    transition: background 0.3s ease, transform 0.3s ease;
-
-    &:hover {
-      background: #f9f9f9;
-      transform: translateY(-5px);
-    }
 
     .blog-title {
-      font-size: 1.5em;
-      margin-bottom: 10px;
+      font-size: 1.75em;
       color: #333;
+      margin: 0 0 10px;
     }
 
     .blog-author {
-      font-style: italic;
+      font-size: 1em;
       color: #555;
-      margin-bottom: 10px;
+      margin: 0 0 10px;
+      font-style: italic;
+    }
+
+    .blog-type {
+      font-size: 0.9em;
+      color: #777;
+      margin: 0 0 10px;
     }
 
     .blog-description {
-      margin-bottom: 15px;
+      font-size: 1em;
       color: #666;
       line-height: 1.6;
+      margin: 0 0 15px;
     }
 
     .blog-tags {
       list-style: none;
       padding: 0;
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
 
       .blog-tag {
-        background: #e0e0e0;
-        border-radius: 5px;
+        background: #007bff;
+        color: #ffffff;
+        border-radius: 20px;
         padding: 5px 10px;
-        font-size: 0.9em;
-        color: #333;
+        font-size: 0.85em;
+        font-weight: 500;
+        text-transform: capitalize;
       }
     }
   }

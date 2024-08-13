@@ -2796,6 +2796,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@contentful/rich-text-react-renderer@npm:^15.22.9":
+  version: 15.22.9
+  resolution: "@contentful/rich-text-react-renderer@npm:15.22.9"
+  dependencies:
+    "@contentful/rich-text-types": ^16.8.3
+  peerDependencies:
+    react: ^16.8.6 || ^17.0.0 || ^18.0.0
+    react-dom: ^16.8.6 || ^17.0.0 || ^18.0.0
+  checksum: 48cc151345e68d753113992d050f3436189b5f75880a393273fa0953f8cd4e524bbfcb8630be86406fe1ed3e74e1fffe787216b1e49abb8b347f43ac95ef5867
+  languageName: node
+  linkType: hard
+
+"@contentful/rich-text-types@npm:^16.8.3":
+  version: 16.8.3
+  resolution: "@contentful/rich-text-types@npm:16.8.3"
+  checksum: 7506a119499a9af145ca52bd4b6f8f82f1cf70cb9d68c1cb824fc0a29c83933c216d1b2d02d1c0ea57e7e73ca5caf995d491f896410649299d6b52cd89e73e38
+  languageName: node
+  linkType: hard
+
 "@cypress/listr-verbose-renderer@npm:0.4.1":
   version: 0.4.1
   resolution: "@cypress/listr-verbose-renderer@npm:0.4.1"
@@ -19042,6 +19061,7 @@ __metadata:
     "@babel/preset-env": 7.9.6
     "@babel/preset-react": 7.9.4
     "@babel/preset-typescript": ^7.10.1
+    "@contentful/rich-text-react-renderer": ^15.22.9
     "@nrwl/cli": 11.1.5
     "@nrwl/cypress": 11.1.5
     "@nrwl/eslint-plugin-nx": 11.1.5

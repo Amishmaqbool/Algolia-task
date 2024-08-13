@@ -1,0 +1,27 @@
+# assessment-component
+
+
+
+<!-- Auto Generated Below -->
+
+
+## Properties
+
+| Property       | Attribute       | Description | Type      | Default     |
+| -------------- | --------------- | ----------- | --------- | ----------- |
+| `questions`    | --              |             | `any[]`   | `undefined` |
+| `resultsIntro` | `results-intro` |             | `string`  | `undefined` |
+| `showProgress` | `show-progress` |             | `boolean` | `true`      |
+
+
+## Events
+
+| Event                 | Description | Type                  |
+| --------------------- | ----------- | --------------------- |
+| `assessmentCompleted` |             | `CustomEvent<any>`    |
+| `pageChanged`         |             | `CustomEvent<number>` |
+
+
+----------------------------------------------
+
+*Built with [StencilJS](https://stenciljs.com/)*

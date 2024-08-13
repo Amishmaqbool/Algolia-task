@@ -1,13 +1,72 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import { documentToReactComponents } from '@contentful/rich-text-react-renderer';
 import "./app.scss"
-// Constants for Contentful API
+import algoliasearch from 'algoliasearch/lite';
+// Initialize Algolia client
+
+const searchClient = algoliasearch('4WK61QBPDU', 'a3a8a3edba3b7ba9dad65b2984b91e69');
+const index = searchClient.initIndex('algolia-recommendation-data');
+index.search('').then(({ hits }) => {
+  console.log(hits);
+});
+index.searchForFacetValues('Vue.js', 'Vue.js').then(({ facetHits }) => {
+  console.log(facetHits, "---facehits");
+});
+
+
+const userAnswers = {
+  preferredLanguage: ["JavaScript"],
+  familiarFrameworks: ["React", "Vue.js"],
+  gitExperience: ["Yes"],
+  remoteWorkExperience: ["Yes"],
+  contributeOpenSource: ["Yes"]
+  // ... other answers
+};
+
+// Construct facet filters
+const constructFacetFilters = (answers: Answers) => {
+  const filters = [];
+  for (const [key, values] of Object.entries(answers)) {
+    values.forEach(value => {
+      if (typeof value === 'boolean') {
+        filters.push(`${key}:${value ? 'true' : 'false'}`);
+      } else {
+        filters.push(`${key}:${value}`);
+      }
+    });
+  }
+  return filters;
+};
+
+// Fetch data from Algolia
+const fetchData = async () => {
+  try {
+    const facetFilters = constructFacetFilters(userAnswers);
+    console.log('Facet Filters:', facetFilters);
+
+    const { hits } = await index.search('', { facetFilters });
+    console.log('Algolia search results:', hits);
+
+    if (hits.length === 0) {
+      console.log('No results found. Check the following:');
+      console.log('1. Verify that the facet filters are correctly defined in Algolia.');
+      console.log('2. Ensure that the data in the index contains the values you are querying for.');
+    }
+  } catch (error) {
+    console.error('Algolia search error:', error);
+  }
+};
+
+// Call fetchData to perform the search
+fetchData();
+// Call fetchData to perform the search
+fetchData();
 const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
 
-// Initialize Apollo Client
+
 const client = new ApolloClient({
   uri: ENDPOINT,
   cache: new InMemoryCache(),
@@ -34,13 +93,20 @@ const GET_ASSESSMENT_DATA = gql`
     }
   }
 `;
-
+// Define the type for answers
+interface Answers {
+  [key: string]: string[]; // Adjust this type if necessary
+}
 // Component to display the assessment data
 const AssessmentData = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
   const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState({});
+  const [results, setResults] = useState([]);
+  const [answers, setAnswers] = useState<Answers>({});
   const [errors, setErrors] = useState({});
+  const [searchResults, setSearchResults] = useState([]);
+
+
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error loading assessment</div>;
@@ -72,13 +138,40 @@ const AssessmentData = () => {
     return isValid;
   };
 
-  const handleNext = (event) => {
+  const handleNext = async (event) => {
     event.preventDefault();
     if (validateCurrentStep()) {
       if (currentStep < pages.length - 1) {
         setCurrentStep(currentStep + 1);
       } else {
-        // Handle form submission or completion here
+        console.log('User Answers:', answers);
+
+        // Construct facet filters from user answers
+        const facetFilters = Object.entries(answers)
+          .flatMap(([key, value]) => {
+            if (Array.isArray(value)) {
+              return value.map(val => `${key}:${val}`);
+            } else if (typeof value === 'boolean') {
+              return value ? `${key}:true` : `${key}:false`;
+            } else {
+              return `${key}:${value}`;
+            }
+          });
+
+        console.log(facetFilters, "facetFilters");
+
+        try {
+          const { hits } = await index.search('', {
+            facetFilters: [facetFilters]
+          });
+          console.log(hits, "==hits");
+          setResults(hits);
+        } catch (err) {
+          console.error('Error performing search:', err);
+        }
+        index.search('').then(({ hits }) => {
+          setSearchResults(hits)
+        });
         alert('Assessment complete!');
       }
     }
@@ -101,6 +194,24 @@ const AssessmentData = () => {
           {index + 1}
         </div>
       ))}
+    </div>
+  );
+
+  const renderResults = () => (
+    <div className="results">
+      {results.length === 0 ? (
+        <p>No results found</p>
+      ) : (
+        results.map((hit, index) => (
+          <div key={index} className="result-card">
+            <h3>{hit.title}</h3>
+            <p>Author: {hit.author}</p>
+            <p>Type: {hit.type}</p>
+            <p>{hit.description}</p>
+            {hit.imageUrl && <img src={hit.imageUrl} alt={hit.title} />}
+          </div>
+        ))
+      )}
     </div>
   );
 
@@ -205,9 +316,29 @@ const AssessmentData = () => {
           </button>
         </div>
       </form>
+      {results.length > 0 && renderResults()}
+      {searchResults && (
+        <section className="blog-section">
+          {searchResults.map((el, index) => (
+            <article key={index} className="blog-post">
+              <h2 className="blog-title">{el.title}</h2>
+              <p className="blog-author">by {el.author}</p>
+              <p className="blog-description">{el.description}</p>
+              <ul className="blog-tags">
+                {el.tags.map((tag, tagIndex) => (
+                  <li key={tagIndex} className="blog-tag">{tag}</li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </section>
+      )}
+
     </div>
   );
 };
+
+
 // Main App component
 const App = () => {
   return (

@@ -8,7 +8,7 @@ body {
 
 
 div {
-  max-width: 800px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
 }
@@ -100,4 +100,59 @@ button:hover {
   color: #e74c3c;
   font-size: 14px;
   margin-top: 5px;
+}
+
+.blog-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  margin-top: 32px;
+  background-color: #f4f4f4;
+
+  .blog-post {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: background 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      background: #f9f9f9;
+      transform: translateY(-5px);
+    }
+
+    .blog-title {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      color: #333;
+    }
+
+    .blog-author {
+      font-style: italic;
+      color: #555;
+      margin-bottom: 10px;
+    }
+
+    .blog-description {
+      margin-bottom: 15px;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    .blog-tags {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      gap: 10px;
+
+      .blog-tag {
+        background: #e0e0e0;
+        border-radius: 5px;
+        padding: 5px 10px;
+        font-size: 0.9em;
+        color: #333;
+      }
+    }
+  }
 }

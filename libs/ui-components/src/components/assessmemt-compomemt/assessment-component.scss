@@ -30,11 +30,8 @@
   padding: 20px;
   font-family: Arial, sans-serif;
   background-color: #ffffff;
-  /* White card background */
   border-radius: 8px;
-  /* Card border radius */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  /* Slight shadow for card effect */
 }
 
 h1 {
@@ -50,7 +47,6 @@ h2.text-1 {
   font-weight: bold;
   text-transform: uppercase;
 }
-
 
 .stepper {
   display: flex;
@@ -69,7 +65,7 @@ h2.text-1 {
     transition: background-color 0.3s, color 0.3s;
 
     &.active {
-      background-color: #1abc9c;
+      background-color: var(--primary-color);
       color: white;
       font-weight: bold;
     }
@@ -79,18 +75,17 @@ h2.text-1 {
 .question {
   margin-bottom: 20px;
   width: 100%;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 15px;
+  background-color: #f9f9f9;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   label {
     display: block;
     margin-bottom: 10px;
-    font-weight: 400;
-    /* Reduced font weight */
-  }
-
-  input[type="text"],
-  input[type="radio"],
-  input[type="checkbox"] {
-    margin: 8px 0;
+    font-weight: 600;
+    color: #333;
   }
 
   input[type="text"] {
@@ -98,13 +93,13 @@ h2.text-1 {
     padding: 8px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    height: 80px;
+    height: 40px;
+    font-size: 16px;
   }
 
   .radio-group,
   .checkbox-group,
   .boolean-group {
-    /* Added boolean-group to apply consistent styling */
     display: flex;
     flex-direction: column;
   }
@@ -112,30 +107,36 @@ h2.text-1 {
   .radio-item,
   .checkbox-item,
   .boolean-item {
-    /* Added boolean-item to apply consistent styling */
     display: flex;
     align-items: center;
     margin-bottom: 10px;
   }
 
-  .radio-item label,
-  .checkbox-item label,
-  .boolean-item label {
-    /* Added boolean-item label styling */
-    margin-left: 8px;
+  .radio-item input[type="radio"],
+  .checkbox-item input[type="checkbox"],
+  .boolean-item input[type="radio"] {
+    margin-right: 12px;
     cursor: pointer;
   }
 
-  input[type="radio"],
-  input[type="checkbox"] {
-    margin-right: 8px;
+  .radio-item label,
+  .checkbox-item label,
+  .boolean-item label {
+    margin-left: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .radio-item input[type="radio"]:checked+label,
+  .checkbox-item input[type="checkbox"]:checked+label {
+    color: var(--primary-color);
   }
 
   &.error {
-    border: 1px solid #ff4d4d;
+    border-color: var(--error-color);
 
     .error-message {
-      color: #ff4d4d;
+      color: var(--error-color);
       font-size: 0.875em;
       margin-top: 5px;
     }
@@ -148,7 +149,7 @@ h2.text-1 {
   margin-top: 30px;
 
   button {
-    background-color: #1abc9c;
+    background-color: var(--primary-color);
     color: white;
     border: none;
     padding: 10px 20px;
@@ -157,18 +158,23 @@ h2.text-1 {
     font-size: 16px;
     margin: 10px 5px;
     transition: background-color 0.3s;
-  }
 
-  button:hover {
-    background-color: #16a085;
-  }
+    &:hover {
+      background-color: #0056b3;
+    }
 
-  .results-intro {
-    margin-top: 30px;
-    font-size: 1.2em;
-    color: #333;
-    text-align: center;
+    &:disabled {
+      background-color: #b0bec5;
+      cursor: not-allowed;
+    }
   }
+}
+
+.results-intro {
+  margin-top: 30px;
+  font-size: 1.2em;
+  color: #333;
+  text-align: center;
 }
 
 @media (max-width: 600px) {

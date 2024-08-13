@@ -7,12 +7,11 @@
 
 ## Properties
 
-| Property        | Attribute        | Description | Type      | Default |
-| --------------- | ---------------- | ----------- | --------- | ------- |
-| `questions`     | --               |             | `any[]`   | `[]`    |
-| `resultsIntro`  | `results-intro`  |             | `string`  | `''`    |
-| `showProgress`  | `show-progress`  |             | `boolean` | `true`  |
-| `triggerSearch` | `trigger-search` |             | `boolean` | `false` |
+| Property       | Attribute       | Description | Type      | Default |
+| -------------- | --------------- | ----------- | --------- | ------- |
+| `questions`    | --              |             | `any[]`   | `[]`    |
+| `resultsIntro` | `results-intro` |             | `string`  | `''`    |
+| `showProgress` | `show-progress` |             | `boolean` | `true`  |
 
 
 ## Events

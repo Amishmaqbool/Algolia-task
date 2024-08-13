@@ -1,10 +1,14 @@
+
+
+
 import React, { useState } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import "./app.scss";
 import algoliasearch from 'algoliasearch/lite';
 import { AssessmentComponent } from 'ui-components-react';
-import RichTextRenderer from './RichTextRenderer';
+import RichTextRenderer from './components/RichTextRenderer';
 
+// Configuration
 const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
@@ -40,23 +44,25 @@ const GET_ASSESSMENT_DATA = gql`
 const AssessmentData = () => {
   const [result, setResult] = useState([]);
   const [loadingResults, setLoadingResults] = useState(false);
-  const [searchTriggered, setSearchTriggered] = useState(false);
+  const [showQuestions, setShowQuestions] = useState(true);
 
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
 
-  const handleSearch = async () => {
+  const handleSearch = async (answers) => {
     setLoadingResults(true);
+    setShowQuestions(false);
+    console.log('Submitting answers:', answers);
     try {
       const { hits } = await index.search('');
+      console.log('Search results:', hits);
       setResult(hits);
-      setSearchTriggered(true);
     } catch (error) {
       console.error('Error fetching search results:', error);
+      setResult([]); // Set an empty result to trigger "No results found" message
     } finally {
       setLoadingResults(false);
     }
   };
-
 
   if (loading) return <div>Loading assessment data...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;
@@ -66,45 +72,55 @@ const AssessmentData = () => {
   const introContent = assessment.intro.json;
   const resultsIntro = assessment.resultsIntro.json;
 
-  console.log(introContent, "-----introContent");
-
   return (
     <>
-      <RichTextRenderer document={introContent} />
-      <AssessmentComponent
-        questions={questions}
-        showProgress={true}
-        onSubmit={handleSearch}
-      />
-      {searchTriggered && (
-        loadingResults ? (
-          <div>Loading search results...</div>
-        ) : result.length > 0 ? (
-          <section className="blog-grid">
-            {result.map((el, index) => (
-              <article key={index} className="blog-post">
-                {el.imageUrl ? (
-                  <img src={el.imageUrl} alt={el.title} className="blog-image" />
-                ) : null}
-                <div className="blog-content">
-                  <h2 className="blog-title">{el.title}</h2>
-                  <p className="blog-author">by {el.author}</p>
-                  <p className="blog-type">Type Of Resource: {el.type}</p>
-                  <p className="blog-description">{el.description}</p>
-                  <ul className="blog-tags">
-                    {el.tags.map((tag, tagIndex) => (
-                      <li key={tagIndex} className="blog-tag">{tag}</li>
-                    ))}
-                  </ul>
-                </div>
-              </article>
-            ))}
-          </section>
-        ) : (
-          <div>No results found.</div>
-        )
+      {showQuestions && (
+        <>
+          <RichTextRenderer document={introContent} />
+          <AssessmentComponent
+            questions={questions}
+            showProgress={true}
+            onSubmit={handleSearch}
+          />
+        </>
       )}
-
+      {loadingResults && <div>Loading search results...</div>}
+      {!loadingResults && !showQuestions && (
+        <>
+          <h2>All relevant results returned by Algolia</h2>
+          {result.length > 0 ? (
+            <section className="blog-grid">
+              {result.map((el, index) => (
+                <article key={index} className="blog-card">
+                  {el.imageUrl ? (
+                    <img
+                      src={el.imageUrl}
+                      alt={el.title}
+                      className="blog-image"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div className="blog-image-placeholder" />
+                  )}
+                  <div className="blog-content">
+                    <h2 className="blog-title">{el.title}</h2>
+                    <p className="blog-author">by {el.author}</p>
+                    <p className="blog-type">Type Of Resource: {el.type}</p>
+                    <p className="blog-description">{el.description}</p>
+                    <ul className="blog-tags">
+                      {el.tags.map((tag, tagIndex) => (
+                        <li key={tagIndex} className="blog-tag">{tag}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </article>
+              ))}
+            </section>
+          ) : (
+            <div>No results found.</div>
+          )}
+        </>
+      )}
     </>
   );
 };

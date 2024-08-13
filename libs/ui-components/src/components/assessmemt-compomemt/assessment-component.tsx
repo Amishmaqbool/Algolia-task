@@ -1,4 +1,21 @@
 import { Component, Event, EventEmitter, h, Prop, State } from '@stencil/core';
+import algoliasearch from 'algoliasearch/lite';
+
+const searchClient = algoliasearch(
+  '4WK61QBPDU',
+  'a3a8a3edba3b7ba9dad65b2984b91e69'
+);
+const index = searchClient.initIndex('algolia-recommendation-data');
+
+interface UserAnswer {
+  questionId: string;
+  answer: any;
+}
+
+interface UserAnswers {
+  [questionId: string]: any[];
+}
+
 
 @Component({
   tag: 'assessment-component',
@@ -9,20 +26,16 @@ export class AssessmentComponent {
   @Prop() questions: any[] = [];
   @Prop() resultsIntro: string = '';
   @Prop() showProgress: boolean = true;
-  @Prop() triggerSearch: boolean = false;
 
   @State() currentPage: number = 0;
-  @State() answers: any[] = [];
+  @State() answers: UserAnswer[] = [];
   @State() validationErrors: Set<string> = new Set();
   @State() completedPages: number = 0;
-  @State() localTriggerSearch: boolean = false;
+  @State() searchResults: any[] = [];
+  @State() searchLoading: boolean = false;
   @Event() assessmentCompleted: EventEmitter<any>;
   @Event() pageChanged: EventEmitter<number>;
   @Event() progressUpdated: EventEmitter<number>;
-
-  componentWillLoad() {
-    this.localTriggerSearch = this.triggerSearch;
-  }
 
   handleAnswer(questionId: string, answer: any) {
     this.answers = [...this.answers.filter((a) => a.questionId !== questionId), { questionId, answer }];
@@ -71,16 +84,11 @@ export class AssessmentComponent {
     }
   }
 
-  handleSubmit(event: MouseEvent) {
-    event.preventDefault();
+  handleSubmit(event?: MouseEvent) {
+    if (event) event.preventDefault();
     if (this.validateCurrentPage()) {
-      console.log('Submit button clicked, setting localTriggerSearch to true');
+      console.log('Assessment completed with answers:', this.answers);  // Debugging line
       this.assessmentCompleted.emit(this.answers);
-      this.localTriggerSearch = true;
-
-      if (this.localTriggerSearch) {
-        console.log('Triggering search...');
-      }
     } else {
       const firstInvalidField = document.querySelector(`.question[data-id="${[...this.validationErrors][0]}"]`);
       if (firstInvalidField) {
@@ -176,8 +184,6 @@ export class AssessmentComponent {
 
   render() {
     const currentQuestion = this.questions[this.currentPage];
-    console.log('Current Page:', this.currentPage);
-    console.log('Current Question:', currentQuestion);
 
     return (
       <div class="assessment-container">
@@ -198,7 +204,7 @@ export class AssessmentComponent {
               {currentQuestion.elements.map((element: any) => (
                 <div
                   key={element.name}
-                  class={`question ${this.validationErrors.has(element.name) ? 'error' : ''}`}
+                  class={`${this.validationErrors.has(element.name) ? 'error' : ''}`}
                   data-id={element.name}
                 >
                   {this.renderQuestion(element)}

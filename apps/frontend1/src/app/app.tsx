@@ -53,7 +53,7 @@ const AssessmentData: React.FC = () => {
       setResult(hits);
     } catch (error) {
       console.error('Error fetching search results:', error);
-      setResult([]); 
+      setResult([]);
     } finally {
       setLoadingResults(false);
     }

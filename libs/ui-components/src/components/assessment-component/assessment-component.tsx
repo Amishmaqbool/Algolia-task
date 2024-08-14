@@ -93,12 +93,14 @@ export class AssessmentComponent {
 
 
   renderQuestion(element: any) {
+    const isSelected = this.answers.some((a) => a.questionId === element.name);
+
     switch (element.type) {
       case 'radiogroup':
         return (
           <div class="question">
             <label>{element.title}</label>
-            <div class="radio-group">
+            <div class={`radio-group ${isSelected ? 'selected' : ''}`}>
               {element.choices.map((choice: string) => (
                 <div class="radio-item" key={choice}>
                   <input
@@ -117,7 +119,7 @@ export class AssessmentComponent {
         return (
           <div class="question">
             <label>{element.title}</label>
-            <div class="checkbox-group">
+            <div class={`checkbox-group ${isSelected ? 'selected' : ''}`}>
               {element.choices.map((choice: string) => (
                 <div class="checkbox-item" key={choice}>
                   <input
@@ -137,7 +139,7 @@ export class AssessmentComponent {
         );
       case 'text':
         return (
-          <div class="question">
+          <div class={`question ${isSelected ? 'selected' : ''}`}>
             <label>{element.title}</label>
             <input
               type="text"
@@ -150,7 +152,7 @@ export class AssessmentComponent {
         return (
           <div class="question">
             <label>{element.title}</label>
-            <div class="boolean-group">
+            <div class={`boolean-group ${isSelected ? 'selected' : ''}`}>
               <div class="boolean-item">
                 <input
                   type="radio"

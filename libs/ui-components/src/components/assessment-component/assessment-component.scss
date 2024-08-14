@@ -28,8 +28,9 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  margin-top: -80px;
   font-family: Arial, sans-serif;
-  background-color: #ffffff;
+  background-color: none;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
@@ -52,7 +53,6 @@ h2.text-1 {
   display: flex;
   gap: 50px !important;
   margin: 20px 0;
-
   .step {
     width: 40px;
     height: 40px;
@@ -76,10 +76,11 @@ h2.text-1 {
   margin-bottom: 20px;
   width: 100%;
   border: 1px solid #ddd;
+  border-left: none;
+  border-right: none;
   border-radius: 8px;
   padding: 15px;
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: none;
 
   label {
     display: block;
@@ -108,28 +109,28 @@ h2.text-1 {
   .checkbox-item,
   .boolean-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     margin-bottom: 10px;
   }
 
   .radio-item input[type="radio"],
   .checkbox-item input[type="checkbox"],
   .boolean-item input[type="radio"] {
-    margin-right: 12px;
+    margin-right: 6px;
     cursor: pointer;
   }
 
   .radio-item label,
   .checkbox-item label,
   .boolean-item label {
-    margin-left: 8px;
+    margin-left: 4px;
     font-size: 16px;
     cursor: pointer;
   }
 
   .radio-item input[type="radio"]:checked+label,
   .checkbox-item input[type="checkbox"]:checked+label {
-    color: var(--primary-color);
+    background-color: var(--primary-color);
   }
 
   &.error {

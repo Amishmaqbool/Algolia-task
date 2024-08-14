@@ -56,9 +56,48 @@ Run `nx g @nrwl/react:lib my-lib` to generate a library.
 
 Libraries are sharable across libraries and applications. They can be imported from `@yourcompany/mylib`.
 
+## Further help
+
+Visit the [Nx Documentation](https://nx.dev) to learn more.
+
+
+
+## Project Overview: 
+
+This section introduces the project, explaining that it integrates Stencil Web Components within a React application hosted in an Nx monorepo. The project uses React for the frontend, while Stencil is used to create reusable web components. Apollo Client is utilized for fetching data from Contentful, and Algolia is implemented for search functionality.
+
+## Workspace Initialization: 
+
+The Nx workspace was created to manage multiple projects, including the React frontend and the Stencil library. The Nx toolset simplifies development, testing, and deployment processes within the monorepo.
+
+## React Application Setup:
+
+A React application named frontend1 was generated within the Nx workspace. This application serves as the main frontend, integrating the Stencil components and handling data display and user interactions.
+
+## Stencil Library Creation: 
+
+A Stencil library named ui-components was created to house all reusable web components, including the AssessmentComponent. These components are compiled to web standards, making them easy to use across different frameworks, including React.
+
+## Data Fetching with Apollo Client: 
+ 
+The project fetches assessment data from Contentful using Apollo Client. This setup allows for seamless integration of GraphQL queries to retrieve structured data, which is then passed to the Stencil components for rendering.
+
+## Algolia Search Integration: 
+
+The project also integrates Algolia for advanced search functionality. This allows for efficient real-time search capabilities within the application, filtering and displaying relevant results based on user inputs on different questions.
+
+## Using Stencil Components in React: 
+
+The React application (frontend1) efficiently uses the generated Stencil components, allowing for a seamless integration with TypeScript. The Stencil components are wrapped with React bindings, enabling their usage within React’s component ecosystem.
+
+## Running and Building the Project: 
+
+The Nx toolset provides commands to run and build the project, ensuring that all components and applications within the workspace can be developed and deployed efficiently.
+
+
 ## Development server
 
-Run `nx serve my-app` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
+Run `nx serve frontend1` for a dev server. Navigate to http://localhost:4200/. The app will automatically reload if you change any of the source files.
 
 ## Code scaffolding
 
@@ -66,24 +105,20 @@ Run `nx g @nrwl/react:component my-component --project=my-app` to generate a new
 
 ## Build
 
-Run `nx build my-app` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+Run `nx build frontend1` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
 
 ## Running unit tests
 
-Run `nx test my-app` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test frontend1` to execute the unit tests via [Jest](https://jestjs.io).
 
 Run `nx affected:test` to execute the unit tests affected by a change.
 
 ## Running end-to-end tests
 
-Run `ng e2e my-app` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
+Run `ng e2e frontend1` to execute the end-to-end tests via [Cypress](https://www.cypress.io).
 
 Run `nx affected:e2e` to execute the end-to-end tests affected by a change.
 
 ## Understand your workspace
 
 Run `nx dep-graph` to see a diagram of the dependencies of your projects.
-
-## Further help
-
-Visit the [Nx Documentation](https://nx.dev) to learn more.

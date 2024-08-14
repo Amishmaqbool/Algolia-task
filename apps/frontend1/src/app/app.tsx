@@ -1,14 +1,10 @@
-
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ApolloClient, InMemoryCache, ApolloProvider, useQuery, gql } from '@apollo/client';
 import "./app.scss";
 import algoliasearch from 'algoliasearch/lite';
 import { AssessmentComponent } from 'ui-components-react';
 import RichTextRenderer from './components/RichTextRenderer';
 
-// Configuration
 const SPACE_ID = "h3n75a0xb6vi";
 const ACCESS_TOKEN = "3R9BuNun6VNkwPQnoUFe-N_dVPA77YccpKmKGla7D54";
 const ENDPOINT = `https://graphql.contentful.com/content/v1/spaces/${SPACE_ID}`;
@@ -47,13 +43,12 @@ const AssessmentData = () => {
   const [showQuestions, setShowQuestions] = useState(true);
 
   const { loading, error, data } = useQuery(GET_ASSESSMENT_DATA);
-
-  const handleSearch = async (answers) => {
+  const fetchResults = async (preferredLanguage) => {
     setLoadingResults(true);
-    setShowQuestions(false);
-    console.log('Submitting answers:', answers);
     try {
-      const { hits } = await index.search('');
+      const { hits } = await index.search('', {
+        facetFilters: [`relevantTo:preferredLanguage:${preferredLanguage}`],
+      });
       console.log('Search results:', hits);
       setResult(hits);
     } catch (error) {
@@ -63,6 +58,15 @@ const AssessmentData = () => {
       setLoadingResults(false);
     }
   };
+
+  const handleSearch = (event) => {
+    console.log('Received event:', event);
+    const preferredLanguage = event.detail;
+    console.log('Preferred language:', preferredLanguage);
+    setShowQuestions(false);
+    fetchResults(preferredLanguage);
+  };
+
 
   if (loading) return <div>Loading assessment data...</div>;
   if (error) return <div>Error loading assessment: {error.message}</div>;
@@ -80,7 +84,7 @@ const AssessmentData = () => {
           <AssessmentComponent
             questions={questions}
             showProgress={true}
-            onSubmit={handleSearch}
+            onAssessmentCompleted={handleSearch}
           />
         </>
       )}

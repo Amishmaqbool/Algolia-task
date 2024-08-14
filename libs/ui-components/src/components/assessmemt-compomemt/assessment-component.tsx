@@ -74,8 +74,13 @@ export class AssessmentComponent {
   handleSubmit(event?: MouseEvent) {
     if (event) event.preventDefault();
     if (this.validateCurrentPage()) {
-      console.log('Assessment completed with answers:', this.answers);  // Debugging line
-      this.assessmentCompleted.emit(this.answers);
+      const preferredLanguageAnswer = this.answers.find(
+        (a) => a.questionId === 'preferredLanguage'
+      );
+
+      console.log('Assessment completed with preferred language:', preferredLanguageAnswer);
+
+      this.assessmentCompleted.emit(preferredLanguageAnswer?.answer);
     } else {
       const firstInvalidField = document.querySelector(`.question[data-id="${[...this.validationErrors][0]}"]`);
       if (firstInvalidField) {
@@ -83,6 +88,7 @@ export class AssessmentComponent {
       }
     }
   }
+
 
   renderQuestion(element: any) {
     switch (element.type) {

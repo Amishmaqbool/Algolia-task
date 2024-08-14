@@ -37,7 +37,7 @@ const GET_ASSESSMENT_DATA = gql`
   }
 `;
 
-const AssessmentData = () => {
+const AssessmentData: React.FC = () => {
   const [result, setResult] = useState([]);
   const [loadingResults, setLoadingResults] = useState(false);
   const [showQuestions, setShowQuestions] = useState(true);

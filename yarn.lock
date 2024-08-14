@@ -3587,23 +3587,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:*":
+"@types/react@npm:*, @types/react@npm:latest":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
   dependencies:
     "@types/prop-types": "*"
     csstype: ^3.0.2
   checksum: c63d6a78163244e2022b01ef79b0baec4fe4da3475dc4a90bb8accefad35ef0c43560fd0312e5974f92a0f1108aa4d669ac72d73d66396aa060ea03b5d2e3873
-  languageName: node
-  linkType: hard
-
-"@types/react@npm:16.9.56":
-  version: 16.9.56
-  resolution: "@types/react@npm:16.9.56"
-  dependencies:
-    "@types/prop-types": "*"
-    csstype: ^3.0.2
-  checksum: 4bf34a10507acf0f8dc3621c25ac446d1499d89e10282ecb69764b025761ff229a23602e1b2815d22282aebccc39e516632da72280954e012ff9ce0ec113a5f3
   languageName: node
   linkType: hard
 
@@ -18959,7 +18949,7 @@ __metadata:
     "@types/jest": 26.0.8
     "@types/node": 12.12.38
     "@types/puppeteer": ^3.0.0
-    "@types/react": 16.9.56
+    "@types/react": latest
     "@types/react-dom": 16.9.9
     "@typescript-eslint/eslint-plugin": 4.3.0
     "@typescript-eslint/parser": 4.3.0

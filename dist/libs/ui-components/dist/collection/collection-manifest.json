@@ -1,0 +1,13 @@
+{
+  "entries": [
+    "./components/assessmemt-compomemt/assessment-component.js",
+    "./components/my-component/my-component.js"
+  ],
+  "compiler": {
+    "name": "@stencil/core",
+    "version": "2.22.3",
+    "typescriptVersion": "4.9.4"
+  },
+  "collections": [],
+  "bundles": []
+}

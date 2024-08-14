@@ -38,7 +38,6 @@ export class AssessmentComponent {
     requiredFields.forEach((field: any) => {
       const answer = this.answers.find((a) => a.questionId === field.name);
 
-      // Check if the answer exists and is not null or undefined
       if (!answer || answer.answer === null || answer.answer === undefined || answer.answer === '') {
         this.validationErrors.add(field.name);
         isValid = false;

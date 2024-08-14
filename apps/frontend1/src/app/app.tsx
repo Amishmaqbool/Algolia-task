@@ -95,7 +95,7 @@ const AssessmentData = () => {
           {result.length > 0 ? (
             <section className="blog-grid">
               {result.map((el, index) => (
-                <article key={index} className="blog-card">
+                <div key={index} className="blog-post">
                   {el.imageUrl ? (
                     <img
                       src={el.imageUrl}
@@ -117,7 +117,7 @@ const AssessmentData = () => {
                       ))}
                     </ul>
                   </div>
-                </article>
+                </div>
               ))}
             </section>
           ) : (

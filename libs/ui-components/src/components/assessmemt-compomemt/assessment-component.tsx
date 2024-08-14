@@ -1,21 +1,8 @@
 import { Component, Event, EventEmitter, h, Prop, State } from '@stencil/core';
-import algoliasearch from 'algoliasearch/lite';
-
-const searchClient = algoliasearch(
-  '4WK61QBPDU',
-  'a3a8a3edba3b7ba9dad65b2984b91e69'
-);
-const index = searchClient.initIndex('algolia-recommendation-data');
-
 interface UserAnswer {
   questionId: string;
   answer: any;
 }
-
-interface UserAnswers {
-  [questionId: string]: any[];
-}
-
 
 @Component({
   tag: 'assessment-component',

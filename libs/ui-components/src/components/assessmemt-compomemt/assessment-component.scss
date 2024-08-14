@@ -50,7 +50,7 @@ h2.text-1 {
 
 .stepper {
   display: flex;
-  justify-content: space-between;
+  gap: 50px !important;
   margin: 20px 0;
 
   .step {
@@ -198,4 +198,14 @@ h2.text-1 {
       margin-bottom: 10px;
     }
   }
+}
+
+.error {
+  border: 2px solid red;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 5px;
 }
